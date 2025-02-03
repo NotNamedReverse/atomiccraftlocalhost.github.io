@@ -1,0 +1,163 @@
+/* =========================================
+   Light Mode (default)
+========================================= */
+#itemList {
+  float: right; /* Position the entire list on the right side */
+  width: 20%; /* Give it a fixed width (or auto, depending on your layout) */
+  min-height: 95vh;
+  max-height: 95vh;
+  list-style: none; /* Remove default bullets */
+  margin: 0;
+  padding: 16px;
+  background-color: #f9f9f9; /* Light gray background */
+  border: 1px solid #ddd; /* Subtle border */
+  border-radius: 4px; /* Rounded corners */
+  text-align: left;
+}
+
+#itemList li {
+  display: block; /* Forces each list item onto its own line */
+  margin: 8px 10px; /* Space between list items */
+}
+
+#itemList li button {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: grab;
+}
+#shopOpen {
+  display: block;
+}
+
+#shopBG {
+  position: fixed;
+  top: 0; /* Adjust these values to place it where you want */
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999; /* Very high so it’s above other elements */
+
+  /* Optional styling: */
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border: 2px solid #333;
+  /* width, height, etc. as needed */
+}
+
+#shopMenu {
+  position: fixed;
+  top: 10vh; /* Adjust these values to place it where you want */
+  left: 10vh;
+  width: 80vw;
+  height: 80vh;
+  z-index: 9999; /* Very high so it’s above other elements */
+
+  /* Optional styling: */
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2%;
+  padding: 10px;
+  border: 2px solid #333;
+  /* width, height, etc. as needed */
+}
+
+#shopList {
+    position: absolute;
+    float: none;
+    width: 93%;
+    height: 90%;
+    overflow-y: auto; /* Add this */
+    list-style: none;
+    left: 1%;
+    top: 5%;
+    margin: 0;
+    padding: 16px;
+    background-color: rgba(249, 249, 249, 0);
+    border: 1px solid #dddddd00;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+
+#shopList li{
+    padding: px 0;
+    border: black;
+    border-bottom: 1px solid #464646;
+}
+
+#shopList li button{
+    margin: 0 10px;
+    font-weight:bold;
+    border-radius: 10%;
+    border-width: 2px;
+}
+
+ul li button:hover {
+  background-color: #c0392b;
+}
+
+#draggable {
+  position: absolute;
+  z-index: 10;
+  cursor: move;
+}
+
+.money-display {
+  display: inline-block;
+  font-size: 1.2em;
+  background-color: #f6f6f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #333;
+  font-weight: bold;
+}
+
+.money-display strong {
+  margin-left: 4px;
+  color: #2c974b; /* a green tone */
+}
+
+/* =========================================
+     Dark Mode overrides
+     (only applies when body has .dark-mode)
+  ========================================= */
+body.dark-mode {
+  background-color: #2a2a2a; /* main background for dark mode */
+  color: #eee; /* default text color */
+}
+
+/* Overriding the 'ul' styles in dark mode */
+body.dark-mode ul {
+  background-color: #333; /* darker background */
+  border-color: #555; /* darker border color */
+}
+
+/* The text inside the list remains light */
+body.dark-mode ul li {
+  color: #000000;
+}
+
+/* Buttons in dark mode can keep the same color or be changed;
+     here's an example that keeps the same red palette */
+body.dark-mode ul li button {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+body.dark-mode ul li button:hover {
+  background-color: #c0392b;
+}
+
+/* Money display in dark mode */
+body.dark-mode .money-display {
+  background-color: #444; /* darker background */
+  color: #eee; /* lighter text color */
+}
+
+/* If you want to keep the strong text the same green, that’s fine;
+     or you can override it too. */
+body.dark-mode .money-display strong {
+  color: #2c974b;
+}
