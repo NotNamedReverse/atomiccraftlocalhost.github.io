@@ -396,7 +396,7 @@
 
       // 4) Modify getCombo to also store the newly discovered element in localStorage
       function getCombo(a, b, left, top) {
-        return fetch(`http://localhostchat.mcserv.me:2120/getCombo/${a}/${b}`)
+        return fetch(`https://localhostchat.mcserv.me:2120/getCombo/${a}/${b}`)
           .then((response) => response.json())
           .then((data) => {
             console.log(data); // The actual JSON object
