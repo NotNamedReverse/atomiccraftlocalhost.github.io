@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Infinite^2 Craft</title>
+    <link rel="stylesheet" href="../static/style.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script
+      src="https://kit.fontawesome.com/1196e0b498.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <span class="money-display">
+      Money: <strong id="money-amount">0</strong>
+    </span>
+    <button
+      onclick="resetData()"
+      style="background: none; border: none; cursor: pointer"
+      title="!!RESET DATA!! (CLICK 3 TIMES)"
+    >
+      <i class="fa-solid fa-arrows-rotate"></i>
+    </button>
+
+    <ul id="itemList">
+      <a
+        >ehcksquse me. if you see this.. somethings wrong!!!! Please reload the
+        page! IF YOU DONT, IT WILL NOT WORK!</a
+      >
+    </ul>
+
+    <div id="draggables"></div>
+    <button onclick="toggleShop()" id="shopOpen">Open Shop</button>
+    <button id="darkModeToggle">Toggle Dark Mode</button>
+
+    <div style="visibility: hidden" id="shopBG">
+      <div id="shopMenu">
+        <button onclick="toggleShop()" style="color: red; font-weight: bold">
+          X
+        </button>
+        <ul id="shopList">
+        
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Check localStorage to see if we previously set dark mode.
+      // If so, add the class right away.
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+
+      // Grab the toggle button
+      const darkModeToggle = document.getElementById("darkModeToggle");
+
+      // When the button is clicked, toggle the class and store the preference
+      darkModeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+
+        // Save the current state (true if body has dark-mode, false otherwise)
+        localStorage.setItem(
+          "darkMode",
+          document.body.classList.contains("dark-mode")
+        );
+      });
+    </script>
+
+    <script>
+      // ------------------------------
+      // 1) Read from localStorage at startup
+      // ------------------------------
+      let discoveredElements = []; // Will store the list of discovered elements
+
+      let money = 0;
+
+      function loadDiscoveredElements() {
+        // Try to load from localStorage
+        const saved = localStorage.getItem("discoveredElements");
+        const savedMoney = localStorage.getItem("money");
+        if (saved) {
+          discoveredElements = JSON.parse(saved);
+        } else {
+          discoveredElements = [
+            {
+              title: "Hydrogen",
+              emoji: "☁",
+            },
+          ];
+          // If you only want the base 3 at start.
+          // Or, you can initialize it as an empty array if you prefer.
+        }
+
+        console.log(savedMoney);
+
+        if (savedMoney) {
+          money = Number(savedMoney); // or parseFloat(savedMoney)
+        }
+      }
+
+      const shopInfo = { Dust: ["🍃", "Dust", 50], Fire: ["🔥", "Fire", 5000] };
+      console.log(localStorage.getItem("purchasedItems"));
+      let purchasedItems =
+        JSON.parse(localStorage.getItem("purchasedItems")) || [];
+      console.log(purchasedItems);
+
+      for (i = 0; i < Object.keys(shopInfo).length; i++)
+      {
+        item = shopInfo[Object.keys(shopInfo)[i]]
+
+        emoji = item[0]
+        name = item[1]
+        cost = item[2]
+
+        console.log(item);
+        console.log(emoji);
+        console.log(name);
+        console.log(cost);
+
+        createShopMenuItem(emoji, name, cost);
+      }
+
+      for (
+        let i = 0;
+        i < document.getElementById("shopList").children.length;
+        i++
+      ) {
+        let tableChild = document.getElementById("shopList").children[i];
+
+        console.log(tableChild.children[0].innerHTML);
+
+        if (purchasedItems.includes(tableChild.children[0].innerHTML)) {
+          tableChild.children[1].style = "background: rgba(58, 58, 58, 0.8);";
+          tableChild.children[1].innerHTML = "PURCHASED";
+          tableChild.children[1].onclick = "";
+        }
+      }
+
+      
+
+      function createShopMenuItem(emoji, title, cost)
+      {
+        // Create the <li> element and set its id
+        const li = document.createElement('li');
+        li.id = title + 'PurchaseButton';
+
+        // Add the icon text (🍃) as a text node
+        const iconText = document.createTextNode(emoji + ' ');
+        li.appendChild(iconText);
+
+        // Create the <a> element and set its text content
+        const anchor = document.createElement('a');
+        anchor.textContent = title;
+        li.appendChild(anchor);
+
+        // Create the <button> element, set its style, and text content
+        const button = document.createElement('button');
+        button.style.background = 'rgba(89, 245, 68, 0.8)';
+        button.textContent = ` Purchase $${cost}`;
+
+        // Attach a click event listener to call purchaseElement('Dust')
+        button.addEventListener('click', function() {
+          purchaseElement(title);
+        });
+        li.appendChild(button);
+
+        // Finally, append the constructed <li> to a parent element.
+        // For example, if you have a <ul id="listContainer"> in your HTML:
+        const listContainer = document.getElementById('shopList');
+        listContainer.appendChild(li);
+        
+      }
+
+      function purchaseElement(element) {
+        console.log(element);
+        console.log(shopInfo[element]);
+        console.log(shopInfo[element]);
+        console.log(purchasedItems.includes(element));
+
+        if (
+          shopInfo[element] != null &&
+          document.getElementById(element + "PurchaseButton") != null &&
+          !purchasedItems.includes(element)
+        ) {
+          console.log("found!");
+          let emoji = shopInfo[element][0];
+          let name = shopInfo[element][1];
+          let cost = shopInfo[element][2];
+
+          if (cost <= money) {
+            let purchaseButton = document.getElementById(
+              element + "PurchaseButton"
+              ).children[1];
+              purchaseButton.style = "background: rgba(58, 58, 58, 0.8);";
+              purchaseButton.innerHTML = "PURCHASED";
+              purchaseButton.onclick = null; // It’s better to set this to null rather than an empty string
+              
+              purchasedItems.push(element);
+              
+              console.log(purchasedItems);
+              
+              // Correctly store the array as a JSON string
+              localStorage.setItem(
+                "purchasedItems",
+                JSON.stringify(purchasedItems)
+                );
+                money -= cost;
+
+                updateMoney();
+                
+            discoveredElements.push({
+              title: name,
+              emoji: emoji,
+            });
+
+            saveDiscoveredElements();
+            localStorage.setItem("money", money);
+
+            renderItemList();
+            updateElements();
+          }
+        }
+      }
+
+      let shopOpen = false;
+
+      function toggleShop() {
+        shopOpen = !shopOpen;
+        if (shopOpen) {
+          document.getElementById("shopBG").style = "visibility: visible;";
+        } else {
+          document.getElementById("shopBG").style = "visibility: hidden;";
+        }
+      }
+
+      let resets = 0;
+      function resetData() {
+        resets += 1;
+
+        if (resets == 3) {
+          localStorage.removeItem("discoveredElements");
+          localStorage.removeItem("money");
+          localStorage.removeItem("purchasedItems");
+
+          location.reload();
+        }
+      }
+
+      function saveDiscoveredElements() {
+        localStorage.setItem(
+          "discoveredElements",
+          JSON.stringify(discoveredElements)
+        );
+      }
+
+      // Populate #itemList based on discovered elements
+      function renderItemList() {
+        const itemList = document.getElementById("itemList");
+
+        // Clear out existing elements
+        itemList.innerHTML = "";
+
+        discoveredElements.forEach((elementObj) => {
+          // elementObj looks like: { title: "Fire", emoji: "🔥" }
+          let button = document.createElement("button");
+          button.innerHTML = `${elementObj.emoji} ${elementObj.title} <a id="${elementObj.title}"></a>`;
+          itemList.appendChild(button);
+        });
+      }
+
+      // 2) On document load, we do:
+      loadDiscoveredElements();
+      renderItemList();
+
+      // 3) Then we define (or re-define) the rest of your logic
+
+      function dragElement(elmnt) {
+        var pos1 = 0,
+          pos2 = 0,
+          pos3 = 0,
+          pos4 = 0;
+        elmnt.onmousedown = dragMouseDown;
+
+        function dragMouseDown(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // get the mouse cursor position at startup:
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          document.onmouseup = closeDragElement;
+          // call a function whenever the cursor moves:
+          document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // calculate the new cursor position:
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          // set the element's new position:
+          elmnt.style.top = elmnt.offsetTop - pos2 + "px";
+          elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+        }
+
+        async function closeDragElement() {
+          // stop moving when mouse button is released:
+          document.onmouseup = null;
+          document.onmousemove = null;
+
+          if (isColliding(elmnt, document.getElementById("itemList"))) {
+            document.getElementById("draggables").removeChild(elmnt);
+          }
+
+          for (
+            let i = 0;
+            i < document.getElementById("draggables").children.length;
+            i++
+          ) {
+            let tableChild = document.getElementById("draggables").children[i];
+
+            if (tableChild != elmnt) {
+              if (isColliding(elmnt, tableChild)) {
+                id1 = elmnt.children[0].id;
+                id2 = tableChild.children[0].id;
+
+                left = elmnt.style.left;
+                tp = elmnt.style.top;
+
+                await getCombo(id1, id2, left, tp);
+
+                // Remove the old elements
+                document.getElementById("draggables").removeChild(elmnt);
+                document.getElementById("draggables").removeChild(tableChild);
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // Called once in the beginning or whenever we re-render itemList
+      function updateElements() {
+        const itemList = document.getElementById("itemList");
+
+        // We attach a click event to each button
+        for (let i = 0; i < itemList.children.length; i++) {
+          let item = itemList.children[i];
+
+          item.onclick = function (event) {
+            var obj = createDraggable(item);
+
+            obj.style.top = event.clientY + "px";
+            obj.style.left = event.clientX + "px";
+          };
+        }
+      }
+
+      function isColliding(el1, el2) {
+        const rect1 = el1.getBoundingClientRect();
+        const rect2 = el2.getBoundingClientRect();
+        console.log("el1:", rect1);
+        console.log("el2:", rect2);
+
+        return !(
+          rect1.right < rect2.left ||
+          rect1.left > rect2.right ||
+          rect1.bottom < rect2.top ||
+          rect1.top > rect2.bottom
+        );
+      }
+
+      // We immediately call updateElements after renderItemList, so the click events are active
+      updateElements();
+
+      function createDraggable(elem) {
+        var newButton = elem.cloneNode(true);
+        newButton.id = "draggable";
+        newButton.style.position = "absolute";
+        dragElement(newButton);
+        document.getElementById("draggables").appendChild(newButton);
+        return newButton;
+      }
+
+      function updateMoney() {
+        console.log("update money");
+        document.getElementById("money-amount").innerHTML = money;
+      }
+
+      updateMoney();
+
+      // 4) Modify getCombo to also store the newly discovered element in localStorage
+      function getCombo(a, b, left, top) {
+        return fetch(`http://localhostchat.mcserv.me:2120/getCombo/${a}/${b}`)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data); // The actual JSON object
+            // data["emoji"], data["title"] are presumably the new element's info
+
+            // If you want to store the emoji along with the title,
+            // you can store an object in discoveredElements:
+            // For simplicity, let's just store the title. But we could also store {title, emoji}.
+
+            let newElementTitle = data["title"];
+
+            // Make sure we don't duplicate
+            console.log({
+              title: data["title"],
+              emoji: data["emoji"],
+              value: data["value"],
+            });
+            if (
+              !discoveredElements.some(
+                (el) => el.title === data["title"] && el.emoji === data["emoji"]
+              )
+            ) {
+              discoveredElements.push({
+                title: data["title"],
+                emoji: data["emoji"],
+              });
+
+              money += data["value"];
+
+              updateMoney();
+
+              console.log("added");
+
+              saveDiscoveredElements(); // <<--- This is the crucial part\
+              localStorage.setItem("money", money);
+            }
+
+            // We now re-render the item list from discoveredElements
+            renderItemList();
+            // Must re-bind click events
+            updateElements();
+
+            // Optionally, create a new draggable button for the newly discovered element
+            if (left && top) {
+              // Create a new button for the newly discovered element
+              var elem = document.createElement("button");
+              elem.innerHTML = `${data["emoji"]} ${newElementTitle} <a id="${newElementTitle}"></a>`;
+              // But you might prefer to rely on the fact that itemList is re-rendered
+              // and do something else. For demonstration:
+              document.getElementById("draggables").appendChild(elem);
+
+              elem.style.position = "absolute";
+              elem.style.left = left;
+              elem.style.top = top;
+
+              dragElement(elem);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
